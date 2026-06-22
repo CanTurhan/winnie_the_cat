@@ -64,8 +64,16 @@
 		<dict>
 			<key>SKAdNetworkIdentifier</key>
 			<string>cstr6suwn9.skadnetwork</string>
-		</dict>
+		
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+
+</dict>
 	</array>
+
+
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 
 </dict>
 </plist>
