@@ -24,65 +24,28 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
+
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<false/>
-		<key>UISceneConfigurations</key>
-		<dict>
-			<key>UIWindowSceneSessionRoleApplication</key>
-			<array>
-				<dict>
-					<key>UISceneClassName</key>
-					<string>UIWindowScene</string>
-					<key>UISceneConfigurationName</key>
-					<string>flutter</string>
-					<key>UISceneDelegateClassName</key>
-					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
-					<key>UISceneStoryboardFile</key>
-					<string>Main</string>
-				
+
 	<key>NSCameraUsageDescription</key>
 	<string>Winnie The Cat uses the camera to let you take cat photos for your personal album.</string>
-
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Winnie The Cat uses your photo library to let you choose cat photos for your personal album.</string>
-
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Winnie The Cat may save shared cat images to your photo library if you choose to do so.</string>
 
-</dict>
-			</array>
-		
-	<key>NSCameraUsageDescription</key>
-	<string>Winnie The Cat uses the camera to let you take cat photos for your personal album.</string>
-
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Winnie The Cat uses your photo library to let you choose cat photos for your personal album.</string>
-
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Winnie The Cat may save shared cat images to your photo library if you choose to do so.</string>
-
-</dict>
-	
-	<key>NSCameraUsageDescription</key>
-	<string>Winnie The Cat uses the camera to let you take cat photos for your personal album.</string>
-
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Winnie The Cat uses your photo library to let you choose cat photos for your personal album.</string>
-
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Winnie The Cat may save shared cat images to your photo library if you choose to do so.</string>
-
-</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -96,15 +59,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<key>NSCameraUsageDescription</key>
-	<string>Winnie The Cat uses the camera to let you take cat photos for your personal album.</string>
-
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Winnie The Cat uses your photo library to let you choose cat photos for your personal album.</string>
-
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Winnie The Cat may save shared cat images to your photo library if you choose to do so.</string>
-
 </dict>
 </plist>

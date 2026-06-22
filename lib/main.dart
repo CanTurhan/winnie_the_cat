@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:winnie_the_cat/core/theme/app_theme.dart';
 import 'package:winnie_the_cat/l10n/app_localizations.dart';
 import 'package:winnie_the_cat/providers/cat_provider.dart';
 import 'package:winnie_the_cat/screens/home_screen.dart';
 import 'package:winnie_the_cat/screens/settings_screen.dart';
+import 'package:winnie_the_cat/widgets/banner_ad_widget.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(const WinnieTheCatApp());
 }
 
@@ -86,23 +90,29 @@ class _MainNavigationState extends State<MainNavigation> {
 
     return Scaffold(
       body: screens[_currentIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (value) {
-          setState(() {
-            _currentIndex = value;
-          });
-        },
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.pets_outlined),
-            selectedIcon: const Icon(Icons.pets),
-            label: l10n.album,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
-            label: l10n.settings,
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const BannerAdWidget(),
+          NavigationBar(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (value) {
+              setState(() {
+                _currentIndex = value;
+              });
+            },
+            destinations: [
+              NavigationDestination(
+                icon: const Icon(Icons.pets_outlined),
+                selectedIcon: const Icon(Icons.pets),
+                label: l10n.album,
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.settings_outlined),
+                selectedIcon: const Icon(Icons.settings),
+                label: l10n.settings,
+              ),
+            ],
           ),
         ],
       ),
