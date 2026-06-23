@@ -17,6 +17,15 @@
         "revision" : "13b248eaa73b7826f0efb1bcf455e251d65ecb1b",
         "version" : "3.1.0"
       }
+    },
+    {
+      "identity" : "tocropviewcontroller",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/TimOliver/TOCropViewController.git",
+      "state" : {
+        "revision" : "98527150c27eef8b695482c9b4ad5bdab1b1cb2b",
+        "version" : "3.1.2"
+      }
     }
   ],
   "version" : 2

@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Winnie The Cat</string>
+	<string>Winnie's Cat Diary</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -32,11 +32,11 @@
 	<true/>
 
 	<key>NSCameraUsageDescription</key>
-	<string>Winnie The Cat uses the camera to let you take cat photos for your personal album.</string>
+	<string>Winnie's Cat Diary uses the camera to let you take cat photos for your personal album.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Winnie The Cat uses your photo library to let you choose cat photos for your personal album.</string>
+	<string>Winnie's Cat Diary uses your photo library to let you choose cat photos for your personal album.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Winnie The Cat may save shared cat images to your photo library if you choose to do so.</string>
+	<string>Winnie's Cat Diary may save shared cat images to your photo library if you choose to do so.</string>
 
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>

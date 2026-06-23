@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -25,6 +26,7 @@ class _AddCatScreenState extends State<AddCatScreen> {
   final _noteController = TextEditingController();
 
   String? _imagePath;
+  bool _isProcessingImage = false;
 
   @override
   void dispose() {
@@ -37,12 +39,61 @@ class _AddCatScreenState extends State<AddCatScreen> {
   Future<String> _copyImageToAppDirectory(String sourcePath) async {
     final appDir = await getApplicationDocumentsDirectory();
     final extension =
-        p.extension(sourcePath).isEmpty ? ".jpg" : p.extension(sourcePath);
-    final fileName = "cat_${DateTime.now().millisecondsSinceEpoch}$extension";
+        p.extension(sourcePath).isEmpty ? '.jpg' : p.extension(sourcePath);
+    final fileName = 'cat_${DateTime.now().millisecondsSinceEpoch}$extension';
     final savedPath = p.join(appDir.path, fileName);
 
     final savedImage = await File(sourcePath).copy(savedPath);
     return savedImage.path;
+  }
+
+  Future<String?> _adjustAndSaveImage(String sourcePath) async {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: sourcePath,
+      maxWidth: 1600,
+      maxHeight: 1600,
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 90,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Adjust Photo',
+          toolbarColor: colorScheme.primary,
+          toolbarWidgetColor: Colors.white,
+          activeControlsWidgetColor: colorScheme.primary,
+          initAspectRatio: CropAspectRatioPreset.square,
+          lockAspectRatio: false,
+          hideBottomControls: false,
+          aspectRatioPresets: const [
+            CropAspectRatioPreset.original,
+            CropAspectRatioPreset.square,
+            CropAspectRatioPreset.ratio4x3,
+            CropAspectRatioPreset.ratio16x9,
+          ],
+        ),
+        IOSUiSettings(
+          title: 'Adjust Photo',
+          doneButtonTitle: 'Done',
+          cancelButtonTitle: 'Cancel',
+          resetButtonHidden: false,
+          rotateButtonsHidden: false,
+          aspectRatioPickerButtonHidden: false,
+          aspectRatioLockEnabled: false,
+          resetAspectRatioEnabled: true,
+          aspectRatioPresets: const [
+            CropAspectRatioPreset.original,
+            CropAspectRatioPreset.square,
+            CropAspectRatioPreset.ratio4x3,
+            CropAspectRatioPreset.ratio16x9,
+          ],
+        ),
+      ],
+    );
+
+    if (croppedFile == null) return null;
+
+    return _copyImageToAppDirectory(croppedFile.path);
   }
 
   Future<void> _showPhotoSourceSheet() async {
@@ -94,24 +145,44 @@ class _AddCatScreenState extends State<AddCatScreen> {
       final picker = ImagePicker();
       final file = await picker.pickImage(
         source: source,
-        imageQuality: 85,
+        imageQuality: 95,
       );
 
       if (file == null) return;
 
-      final savedPath = await _copyImageToAppDirectory(file.path);
-
       if (!mounted) return;
 
       setState(() {
-        _imagePath = savedPath;
+        _isProcessingImage = true;
       });
+
+      final savedPath = await _adjustAndSaveImage(file.path);
+
+      if (!mounted) return;
+
+      if (savedPath != null) {
+        setState(() {
+          _imagePath = savedPath;
+        });
+      }
     } on PlatformException {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.cameraError)),
       );
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.cameraError)),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessingImage = false;
+        });
+      }
     }
   }
 
@@ -158,32 +229,53 @@ class _AddCatScreenState extends State<AddCatScreen> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: _showPhotoSourceSheet,
+                  onTap: _isProcessingImage ? null : _showPhotoSourceSheet,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: _imagePath != null && File(_imagePath!).existsSync()
-                        ? Image.file(
-                            File(_imagePath!),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        _imagePath != null && File(_imagePath!).existsSync()
+                            ? Image.file(
+                                File(_imagePath!),
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                height: 200,
+                                width: double.infinity,
+                                color: Colors.orange.shade100,
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.add_a_photo_outlined,
+                                      size: 36,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(l10n.pickPhoto),
+                                  ],
+                                ),
+                              ),
+                        if (_isProcessingImage)
+                          Container(
                             height: 200,
                             width: double.infinity,
-                            fit: BoxFit.cover,
-                          )
-                        : Container(
-                            height: 200,
-                            width: double.infinity,
-                            color: Colors.orange.shade100,
+                            color: Colors.black.withValues(alpha: 0.18),
                             alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.add_a_photo_outlined,
-                                    size: 36),
-                                const SizedBox(height: 8),
-                                Text(l10n.pickPhoto),
-                              ],
-                            ),
+                            child: const CircularProgressIndicator(),
                           ),
+                      ],
+                    ),
                   ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Tap photo to choose, crop, zoom, rotate, or adjust.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -221,7 +313,7 @@ class _AddCatScreenState extends State<AddCatScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
-                    onPressed: _save,
+                    onPressed: _isProcessingImage ? null : _save,
                     child: Text(l10n.save),
                   ),
                 ),

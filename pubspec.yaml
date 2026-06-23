@@ -2,7 +2,7 @@ name: winnie_the_cat
 description: A simple cat album app for saving and caring for cats you meet.
 publish_to: "none"
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
@@ -24,6 +24,7 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.1
   google_mobile_ads: ^9.0.0
+  image_cropper: ^12.2.1
 
 dev_dependencies:
   flutter_test:

@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Winnie The Cat';
+  String get appTitle => 'Winnie\'s Cat Diary';
 
   @override
   String get album => 'Album';
@@ -91,7 +91,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyDescription =>
-      'Your cat album is saved locally on this device. Winnie The Cat does not require an account or GPS location.';
+      'Your cat album is saved locally on this device. Winnie\'s Cat Diary does not require an account or GPS location.';
 
   @override
   String get photoPrivacy =>
@@ -109,7 +109,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'The share button opens the iOS share sheet. Apps such as WhatsApp or Instagram may appear if they are installed and support the shared content.';
 
   @override
-  String get aboutTitle => 'About Winnie The Cat';
+  String get aboutTitle => 'About Winnie\'s Cat Diary';
 
   @override
   String get aboutDescription =>

@@ -61,7 +61,7 @@ class _CatDetailScreenState extends State<CatDetailScreen> {
         cat.note.trim().isEmpty ? "" : "\n${l10n.note}: ${cat.note.trim()}";
 
     final text =
-        "${cat.name}\n${l10n.place}: ${cat.place}\n${l10n.lastSeen}: $dateText$noteText\n\nMade with Winnie The Cat";
+        "${cat.name}\n${l10n.place}: ${cat.place}\n${l10n.lastSeen}: $dateText$noteText\n\nMade with Winnie's Cat Diary";
 
     final hasImage = cat.imagePath != null &&
         cat.imagePath!.isNotEmpty &&

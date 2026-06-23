@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Winnie The Cat'**
+  /// **'Winnie\'s Cat Diary'**
   String get appTitle;
 
   /// No description provided for @album.
@@ -263,7 +263,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyDescription.
   ///
   /// In en, this message translates to:
-  /// **'Your cat album is saved locally on this device. Winnie The Cat does not require an account or GPS location.'**
+  /// **'Your cat album is saved locally on this device. Winnie\'s Cat Diary does not require an account or GPS location.'**
   String get privacyDescription;
 
   /// No description provided for @photoPrivacy.
@@ -293,7 +293,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutTitle.
   ///
   /// In en, this message translates to:
-  /// **'About Winnie The Cat'**
+  /// **'About Winnie\'s Cat Diary'**
   String get aboutTitle;
 
   /// No description provided for @aboutDescription.

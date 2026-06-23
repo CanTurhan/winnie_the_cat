@@ -9,7 +9,7 @@ class AppLocalizationsTr extends AppLocalizations {
   AppLocalizationsTr([String locale = 'tr']) : super(locale);
 
   @override
-  String get appTitle => 'Winnie The Cat';
+  String get appTitle => 'Winnie\'s Cat Diary';
 
   @override
   String get album => 'Albüm';
@@ -91,7 +91,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get privacyDescription =>
-      'Kedi albümün bu cihazda yerel olarak saklanır. Winnie The Cat hesap veya GPS konumu gerektirmez.';
+      'Kedi albümün bu cihazda yerel olarak saklanır. Winnie\'s Cat Diary hesap veya GPS konumu gerektirmez.';
 
   @override
   String get photoPrivacy =>
@@ -109,7 +109,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Paylaş butonu iOS paylaşım ekranını açar. WhatsApp veya Instagram gibi uygulamalar yüklüyse ve paylaşılan içeriği destekliyorsa listede görünebilir.';
 
   @override
-  String get aboutTitle => 'Winnie The Cat Hakkında';
+  String get aboutTitle => 'Winnie\'s Cat Diary Hakkında';
 
   @override
   String get aboutDescription =>

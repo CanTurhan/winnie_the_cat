@@ -1,6 +1,6 @@
-# Winnie The Cat
+# Winnie's Cat Diary
 
-Winnie The Cat is a simple Flutter app for saving cats you meet, adding names, places, notes, photos, and feeding them virtually.
+Winnie's Cat Diary is a simple Flutter app for saving cats you meet, adding names, places, notes, photos, and feeding them virtually.
 
 ## Features
 
