@@ -18,9 +18,7 @@ class SettingsScreen extends StatelessWidget {
         currentLocale.languageCode == 'tr' ? l10n.turkish : l10n.english;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings),
-      ),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         children: [
@@ -37,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
             turkishLabel: l10n.turkish,
           ),
           const SizedBox(height: 14),
-          _InfoCard(
+          _ExpandableInfoCard(
             icon: Icons.privacy_tip_outlined,
             title: l10n.privacyTitle,
             lines: [
@@ -47,12 +45,12 @@ class SettingsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          _InfoCard(
+          _ExpandableInfoCard(
             icon: Icons.pets,
             title: l10n.aboutTitle,
             lines: [
               l10n.aboutDescription,
-              "${l10n.version}: 1.0.0",
+              "${l10n.version}: 1.0.1",
             ],
           ),
         ],
@@ -90,16 +88,11 @@ class _LanguageCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.language),
-                const SizedBox(width: 10),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
-            ),
+            Row(children: [
+              const Icon(Icons.language),
+              const SizedBox(width: 10),
+              Text(title, style: Theme.of(context).textTheme.titleMedium),
+            ]),
             const SizedBox(height: 8),
             Text(description),
             const SizedBox(height: 12),
@@ -140,12 +133,12 @@ class _LanguageCard extends StatelessWidget {
   }
 }
 
-class _InfoCard extends StatelessWidget {
+class _ExpandableInfoCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final List<String> lines;
 
-  const _InfoCard({
+  const _ExpandableInfoCard({
     required this.icon,
     required this.title,
     required this.lines,
@@ -154,33 +147,21 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 28),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  ...lines.map(
-                    (line) => Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Text(line),
-                    ),
-                  ),
-                ],
+      child: ExpansionTile(
+        leading: Icon(icon),
+        title: Text(title, style: Theme.of(context).textTheme.titleMedium),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        children: lines
+            .map(
+              (line) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(line),
+                ),
               ),
-            ),
-          ],
-        ),
+            )
+            .toList(),
       ),
     );
   }

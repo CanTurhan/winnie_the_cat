@@ -33,6 +33,7 @@ class CatProvider extends ChangeNotifier {
       );
 
     _cats.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    await _saveCats();
     notifyListeners();
   }
 
@@ -48,13 +49,49 @@ class CatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateNote(String id, String note) async {
+    final index = _cats.indexWhere((cat) => cat.id == id);
+    if (index == -1) return;
+
+    _cats[index] = _cats[index].copyWith(note: note);
+    await _saveCats();
+    notifyListeners();
+  }
+
+  Future<void> addPhotoToCat(String id, String imagePath) async {
+    final index = _cats.indexWhere((cat) => cat.id == id);
+    if (index == -1) return;
+
+    final paths = List<String>.from(_cats[index].imagePaths)..add(imagePath);
+    _cats[index] = _cats[index].copyWith(imagePaths: paths);
+    await _saveCats();
+    notifyListeners();
+  }
+
+  Future<void> removePhotoFromCat(String id, String imagePath) async {
+    final index = _cats.indexWhere((cat) => cat.id == id);
+    if (index == -1) return;
+
+    final paths = List<String>.from(_cats[index].imagePaths)
+      ..removeWhere((path) => path == imagePath);
+
+    final imageFile = File(imagePath);
+    if (imageFile.existsSync()) {
+      try {
+        await imageFile.delete();
+      } catch (_) {}
+    }
+
+    _cats[index] = _cats[index].copyWith(imagePaths: paths);
+    await _saveCats();
+    notifyListeners();
+  }
+
   Future<void> deleteCat(String id) async {
     final index = _cats.indexWhere((cat) => cat.id == id);
     if (index == -1) return;
 
-    final imagePath = _cats[index].imagePath;
-
-    if (imagePath != null && imagePath.isNotEmpty) {
+    for (final imagePath in _cats[index].imagePaths) {
       final imageFile = File(imagePath);
       if (imageFile.existsSync()) {
         try {

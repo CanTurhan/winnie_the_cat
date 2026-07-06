@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
@@ -28,6 +29,10 @@ class _AddCatScreenState extends State<AddCatScreen> {
   String? _imagePath;
   bool _isProcessingImage = false;
 
+  String _text(BuildContext context, String en, String tr) {
+    return Localizations.localeOf(context).languageCode == 'tr' ? tr : en;
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -36,10 +41,31 @@ class _AddCatScreenState extends State<AddCatScreen> {
     super.dispose();
   }
 
+  Future<bool> _looksLikeCatPhoto(String sourcePath) async {
+    final labeler = ImageLabeler(
+      options: ImageLabelerOptions(confidenceThreshold: 0.45),
+    );
+
+    try {
+      final labels = await labeler.processImage(InputImage.fromFilePath(sourcePath));
+      final values = labels.map((e) => e.label.toLowerCase()).toList();
+
+      return values.any((label) =>
+          label.contains('cat') ||
+          label.contains('kitten') ||
+          label.contains('pet') ||
+          label.contains('animal') ||
+          label.contains('mammal'));
+    } catch (_) {
+      return true;
+    } finally {
+      await labeler.close();
+    }
+  }
+
   Future<String> _copyImageToAppDirectory(String sourcePath) async {
     final appDir = await getApplicationDocumentsDirectory();
-    final extension =
-        p.extension(sourcePath).isEmpty ? '.jpg' : p.extension(sourcePath);
+    final extension = p.extension(sourcePath).isEmpty ? '.jpg' : p.extension(sourcePath);
     final fileName = 'cat_${DateTime.now().millisecondsSinceEpoch}$extension';
     final savedPath = p.join(appDir.path, fileName);
 
@@ -93,11 +119,28 @@ class _AddCatScreenState extends State<AddCatScreen> {
 
     if (croppedFile == null) return null;
 
+    final isCat = await _looksLikeCatPhoto(croppedFile.path);
+    if (!isCat) {
+      if (!mounted) return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _text(
+              context,
+              'No cat was detected in this photo. Please choose a cat photo.',
+              'Bu fotoğrafta kedi algılanmadı. Lütfen kedi fotoğrafı seç.',
+            ),
+          ),
+        ),
+      );
+      return null;
+    }
+
     return _copyImageToAppDirectory(croppedFile.path);
   }
 
   Future<void> _showPhotoSourceSheet() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     await showModalBottomSheet<void>(
       context: context,
@@ -109,10 +152,7 @@ class _AddCatScreenState extends State<AddCatScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  l10n.photoSource,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+                Text(l10n.photoSource, style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 12),
                 ListTile(
                   leading: const Icon(Icons.photo_camera_outlined),
@@ -139,55 +179,36 @@ class _AddCatScreenState extends State<AddCatScreen> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     try {
       final picker = ImagePicker();
-      final file = await picker.pickImage(
-        source: source,
-        imageQuality: 95,
-      );
-
+      final file = await picker.pickImage(source: source, imageQuality: 95);
       if (file == null) return;
-
       if (!mounted) return;
 
-      setState(() {
-        _isProcessingImage = true;
-      });
+      setState(() => _isProcessingImage = true);
 
       final savedPath = await _adjustAndSaveImage(file.path);
 
       if (!mounted) return;
 
       if (savedPath != null) {
-        setState(() {
-          _imagePath = savedPath;
-        });
+        setState(() => _imagePath = savedPath);
       }
     } on PlatformException {
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.cameraError)),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.cameraError)));
     } catch (_) {
       if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.cameraError)),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.cameraError)));
     } finally {
-      if (mounted) {
-        setState(() {
-          _isProcessingImage = false;
-        });
-      }
+      if (mounted) setState(() => _isProcessingImage = false);
     }
   }
 
   Future<void> _save() async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     if (!_formKey.currentState!.validate()) return;
 
@@ -196,7 +217,7 @@ class _AddCatScreenState extends State<AddCatScreen> {
       name: _nameController.text.trim(),
       place: _placeController.text.trim(),
       note: _noteController.text.trim(),
-      imagePath: _imagePath,
+      imagePaths: _imagePath == null ? [] : [_imagePath!],
       lastSeen: DateTime.now(),
       fedToday: false,
       createdAt: DateTime.now(),
@@ -206,21 +227,16 @@ class _AddCatScreenState extends State<AddCatScreen> {
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.addedSuccessfully)),
-    );
-
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.addedSuccessfully)));
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.addCat),
-      ),
+      appBar: AppBar(title: Text(l10n.addCat)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
@@ -250,10 +266,7 @@ class _AddCatScreenState extends State<AddCatScreen> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(
-                                      Icons.add_a_photo_outlined,
-                                      size: 36,
-                                    ),
+                                    const Icon(Icons.add_a_photo_outlined, size: 36),
                                     const SizedBox(height: 8),
                                     Text(l10n.pickPhoto),
                                   ],
@@ -273,7 +286,11 @@ class _AddCatScreenState extends State<AddCatScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Tap photo to choose, crop, zoom, rotate, or adjust.',
+                  _text(
+                    context,
+                    'Tap photo to choose, crop, zoom, rotate, or adjust.',
+                    'Fotoğraf seçmek, kırpmak, yakınlaştırmak, döndürmek veya düzenlemek için dokun.',
+                  ),
                   style: Theme.of(context).textTheme.bodySmall,
                   textAlign: TextAlign.center,
                 ),
@@ -281,33 +298,22 @@ class _AddCatScreenState extends State<AddCatScreen> {
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(labelText: l10n.name),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return l10n.nameRequired;
-                    }
-                    return null;
-                  },
+                  validator: (value) =>
+                      value == null || value.trim().isEmpty ? l10n.nameRequired : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _placeController,
                   decoration: InputDecoration(labelText: l10n.place),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return l10n.placeRequired;
-                    }
-                    return null;
-                  },
+                  validator: (value) =>
+                      value == null || value.trim().isEmpty ? l10n.placeRequired : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _noteController,
                   minLines: 3,
                   maxLines: 5,
-                  decoration: InputDecoration(
-                    labelText: l10n.note,
-                    hintText: l10n.optional,
-                  ),
+                  decoration: InputDecoration(labelText: l10n.note, hintText: l10n.optional),
                 ),
                 const SizedBox(height: 20),
                 SizedBox(
